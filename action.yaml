@@ -1,30 +1,33 @@
-name: "davidkhala/new-action"
-description: 'new action description'
+name: "davidkhala/build-dify-plugin"
+description: ''
 
 branding:
   icon: 'package' # find one in https://haya14busa.github.io/github-action-brandings/
   color: 'purple' # one of ["white", "yellow", "blue", "green", "orange", "red", "purple", "gray-dark"]
-inputs:
-  tests:
-    description: 'Test Sources Root: working-directory of your tests'
-    required: false
-    default: tests
-  working-directory:
-    description: 'action run path'
-    required: true
 runs:
   using: "composite"
   steps:
-  - if: ${{ inputs.tests != '' }}
-    run: echo tests
-    working-directory: ${{inputs.working-directory}}
-    shell: bash
+  
   - if: runner.os == 'Linux'
-    run: sudo apt update
+    run: |
+      LATEST_RELEASE=$(curl -s https://api.github.com/repos/langgenius/dify-plugin-daemon/releases/latest)
+      DOWNLOAD_URL=$(echo $LATEST_RELEASE | jq -r '.assets[] | select(.name | contains("dify-plugin-linux-amd64")) | .browser_download_url' | head -1)
+      curl -L -o ../dify $DOWNLOAD_URL
+      chmod +x ../dify
+      ../dify version
     shell: bash
   - if: runner.os == 'macOS'
-    run: brew update
+    run: | 
+      LATEST_RELEASE=$(curl -s https://api.github.com/repos/langgenius/dify-plugin-daemon/releases/latest)
+      DOWNLOAD_URL=$(echo $LATEST_RELEASE | jq -r '.assets[] | select(.name | contains("dify-plugin-darwin-arm64")) | .browser_download_url' | head -1)
+      curl -L -o ../dify $DOWNLOAD_URL
+      chmod +x ../dify
+      ../dify version
     shell: bash
   - if: runner.os == 'Windows'
-    run: choco upgrade chocolatey
-    shell: powershell
+    run: |
+      $latest = Invoke-RestMethod https://api.github.com/repos/langgenius/dify-plugin-daemon/releases/latest
+      $url = $latest.assets | Where-Object { $_.name -like "*dify-plugin-windows-amd64.exe*" } | Select-Object -First 1 | ForEach-Object { $_.browser_download_url }
+      Invoke-WebRequest -Uri $url -OutFile "$env:GITHUB_WORKSPACE\dify.exe"
+      & "$env:GITHUB_WORKSPACE\dify.exe" version
+    shell: pwsh
