@@ -1,0 +1,25 @@
+version: 0.0.0
+name: minimum plugin
+type: plugin
+author: davidkhala
+label:
+  en_US: ' '
+description:
+  en_US: ' '
+
+resource:
+  memory: 1
+icon: icon.svg
+meta:
+  version: 0.0.0
+  arch:
+  - amd64
+  - arm64
+  runner:
+    language: python
+    version: "3.x"
+    entrypoint: main
+
+created_at: 2025-11-12T10:48:00+08:00
+verified: false
+
