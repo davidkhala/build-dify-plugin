@@ -1,12 +1,12 @@
 name: "davidkhala/build-dify-plugin"
-description: ''
+description: 'GitHub Action to build Dify plugin package from pyproject.toml'
 
 branding:
   icon: 'package' # find one in https://haya14busa.github.io/github-action-brandings/
   color: 'blue'
 inputs:
   pyproject-directory:
-    description: 'dir of pyproject.toml'
+    description: 'directory of pyproject.toml'
     required: true
 runs:
   using: "composite"
